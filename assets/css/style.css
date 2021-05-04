@@ -83,11 +83,11 @@
 
 .readme {
   position: relative;
+  font-weight: bold;
   padding: 11px 35px;
-  background: #fff;
-  color: #00796b;
-  border: 2px solid #fff;
-  font-weight: 600;
+  background: #ffff;
+  color: #000000;
+  font-weight: 800;
   font-size: 15px;
   letter-spacing: 1px;
   display: inline-block;
@@ -95,18 +95,18 @@
   -webkit-border-radius: 5px;
 }
 
-/* .readme:hover{
+.readme:hover{
   color: white;
-  background-color: #00796b;
-} */
+  background-color: #004d40;
+}
 
 .contactme {
   position: relative;
   padding: 11px 35px;
-  background: none;
+  background: #004d40;
   color: #fff;
-  border: 2px solid #fff;
-  font-weight: 600;
+  
+  font-weight: 800;
   font-size: 15px;
   letter-spacing: 1px;
   display: inline-block;
@@ -314,15 +314,15 @@ h3 {
 
 /* Original */
 
-/* #intro.section {
-  background: url(../../assets/img/white-ai-wallpaper.jpg) no-repeat top center/cover;
-  position: relative;
-} */
-
 #intro.section {
-  background: #a7ffeb repeat;
+  background: url(../../assets/img/10a-1.jpg) no-repeat top center/cover;
   position: relative;
 }
+
+/* #intro.section {
+  background: #a7ffeb repeat;
+  position: relative;
+} */
 
 #intro.section .container {
   color: white;
@@ -356,8 +356,7 @@ h3 {
 }
 
 .overlay {
-  /* background-color: rgba(0, 0, 0, 0.4); */
-  background-image: url(../img/ai-wallpaper-1.jpg);
+  background-color: rgba(24, 46, 38, 0.549);
   height: 100%;
   left: 0;
   position: absolute;
