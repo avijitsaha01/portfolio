@@ -1,0 +1,37 @@
+---
+import { getCollection } from 'astro:content';
+import { sectionCopy } from '../data/site';
+
+const copy = sectionCopy.skills;
+const groups = (await getCollection('skills')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<section class="section" id="skills" aria-labelledby="skills-title">
+  <div class="container">
+    <header class="section-head reveal">
+      <p class="eyebrow"><span>04</span> {copy.eyebrow}</p>
+      <h2 id="skills-title">{copy.title}</h2>
+      <p class="section-sub">{copy.sub}</p>
+    </header>
+
+    <div class="skills-grid">
+      {
+        groups.map((group, index) => (
+          <article class="panel skill-group reveal" style={`--d: ${index * 60}ms`}>
+            <h3>{group.data.title}</h3>
+            <ul class="skill-list">
+              {group.data.items.map((item) => (
+                <li class="skill">
+                  <span class="skill-icon">
+                    <img src={item.icon} alt="" loading="lazy" decoding="async" />
+                  </span>
+                  <span>{item.name}</span>
+                </li>
+              ))}
+            </ul>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

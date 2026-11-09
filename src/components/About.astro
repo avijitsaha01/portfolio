@@ -1,0 +1,47 @@
+---
+import Icon from './Icon.astro';
+import { about, sectionCopy } from '../data/site';
+
+const copy = sectionCopy.about;
+---
+
+<section class="section" id="about" aria-labelledby="about-title">
+  <div class="container">
+    <header class="section-head reveal">
+      <p class="eyebrow"><span>01</span> {copy.eyebrow}</p>
+      <h2 id="about-title">{copy.title}</h2>
+      <p class="section-sub">{copy.sub}</p>
+    </header>
+
+    <div class="about-grid">
+      <div class="panel about-copy reveal">
+        {about.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+
+        <ul class="meta-chips" aria-label="Quick facts">
+          {
+            about.facts.map((fact) => (
+              <li>
+                <Icon name={fact.icon} />
+                {fact.label}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="about-cards">
+        {
+          about.pillars.map((pillar, index) => (
+            <article class="panel mini-card reveal" style={`--d: ${index * 60}ms`}>
+              <span class="mini-icon">
+                <Icon name={pillar.icon} />
+              </span>
+              <h3>{pillar.title}</h3>
+              <p>{pillar.text}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>

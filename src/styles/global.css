@@ -5,6 +5,11 @@
 
 /* ---------- Design tokens ---------- */
 :root {
+  /* Force dark rendering for native UI: scrollbars, form controls, autofill,
+     date pickers and the like. The <meta name="color-scheme"> tag covers this
+     too, but the CSS declaration survives meta stripping and iframes. */
+  color-scheme: dark;
+  accent-color: var(--accent);
   --bg: #070b14;
   --bg-soft: #0b1220;
   --surface: rgba(255, 255, 255, 0.045);
@@ -1680,5 +1685,549 @@ button {
   .reveal {
     opacity: 1;
     transform: none;
+  }
+}
+
+/* ==========================================================================
+   Contact form
+   ========================================================================== */
+.contact-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.contact-grid-side {
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: clamp(24px, 3vw, 34px);
+}
+
+.form-head h3 {
+  font-size: clamp(1.25rem, 2.2vw, 1.5rem);
+}
+
+.form-head p {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.field label {
+  color: var(--muted-2);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.field .optional {
+  margin-left: 4px;
+  color: var(--muted-2);
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  opacity: 0.8;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(7, 11, 20, 0.55);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.94rem;
+  transition: border-color 0.2s var(--ease), background 0.2s var(--ease),
+    box-shadow 0.2s var(--ease);
+}
+
+.field textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: rgba(45, 212, 191, 0.55);
+  background: rgba(7, 11, 20, 0.82);
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.14);
+}
+
+.field input:user-invalid,
+.field textarea:user-invalid {
+  border-color: rgba(248, 113, 113, 0.55);
+}
+
+/* Honeypot: visible to bots, never to people. */
+.honey {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.form-footer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.form-footer button[disabled] {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.form-status {
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+.form-status[data-state='ok'] {
+  color: var(--accent);
+}
+
+.form-status[data-state='error'] {
+  color: #fca5a5;
+}
+
+.form-note {
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  color: var(--muted-2);
+  font-size: 0.83rem;
+}
+
+.form-note a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: rgba(45, 212, 191, 0.4);
+  text-underline-offset: 3px;
+}
+
+/* Compact contact cards in the side column */
+.contact-grid-side .contact-card {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  grid-template-areas:
+    'icon label'
+    'icon value';
+  align-items: center;
+  column-gap: 13px;
+  row-gap: 2px;
+  padding: 14px 16px;
+}
+
+.contact-grid-side .contact-icon {
+  grid-area: icon;
+  width: 38px;
+  height: 38px;
+  margin-bottom: 0;
+}
+
+.contact-grid-side .contact-icon .icon {
+  width: 17px;
+  height: 17px;
+}
+
+.contact-grid-side .contact-label {
+  grid-area: label;
+}
+
+.contact-grid-side .contact-value {
+  grid-area: value;
+  font-size: 0.85rem;
+}
+
+.footer-admin {
+  margin-left: 8px;
+  color: var(--muted);
+  text-decoration: underline;
+  text-decoration-color: rgba(152, 166, 189, 0.4);
+  text-underline-offset: 3px;
+}
+
+.footer-admin:hover {
+  color: var(--accent);
+}
+
+/* ==========================================================================
+   Admin
+   ========================================================================== */
+.admin-body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-shell {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 40px 24px 72px;
+  flex: 1;
+}
+
+.admin-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+
+.admin-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-head);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.admin-brand .brand-mark {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--grad);
+  color: var(--accent-ink);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.admin-heading {
+  margin-bottom: 24px;
+}
+
+.admin-heading h1 {
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+}
+
+.admin-heading p {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.94rem;
+}
+
+.admin-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.admin-stat {
+  padding: 18px 20px;
+}
+
+.admin-stat dt {
+  color: var(--muted-2);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.admin-stat dd {
+  margin: 6px 0 0;
+  font-family: var(--font-head);
+  font-size: 1.7rem;
+  font-weight: 600;
+}
+
+.message-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.message {
+  padding: 20px 22px;
+}
+
+.message.is-unread {
+  border-color: rgba(45, 212, 191, 0.34);
+  background: linear-gradient(160deg, rgba(45, 212, 191, 0.07), rgba(255, 255, 255, 0.02));
+}
+
+.message-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.message-from {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.message-name {
+  font-weight: 600;
+}
+
+.message-email {
+  color: var(--accent);
+  font-size: 0.85rem;
+  word-break: break-word;
+}
+
+.message-date {
+  color: var(--muted-2);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.message-subject {
+  margin-top: 12px;
+  font-family: var(--font-head);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.message-body {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.94rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.message-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.2s var(--ease), background 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.icon-btn .icon {
+  width: 15px;
+  height: 15px;
+}
+
+.icon-btn:hover {
+  border-color: rgba(45, 212, 191, 0.45);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.icon-btn.danger:hover {
+  border-color: rgba(248, 113, 113, 0.5);
+  color: #fecaca;
+}
+
+.empty-state {
+  padding: 52px 24px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.empty-state .icon {
+  width: 30px;
+  height: 30px;
+  margin-bottom: 12px;
+  color: var(--muted-2);
+}
+
+.login-wrap {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 430px;
+  padding: clamp(26px, 4vw, 38px);
+}
+
+.login-head {
+  margin-bottom: 22px;
+}
+
+.login-head h1 {
+  margin-top: 14px;
+  font-size: 1.55rem;
+}
+
+.login-head p {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.login-alert {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  border-radius: 12px;
+  background: rgba(248, 113, 113, 0.08);
+  color: #fecaca;
+  font-size: 0.86rem;
+}
+
+.login-foot {
+  margin-top: 18px;
+  color: var(--muted-2);
+  font-size: 0.83rem;
+  text-align: center;
+}
+
+.login-foot a {
+  color: var(--accent);
+}
+
+.setup-card {
+  padding: clamp(24px, 3vw, 34px);
+}
+
+.setup-card h2 {
+  font-size: 1.3rem;
+}
+
+.setup-card p {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.93rem;
+}
+
+.setup-list {
+  margin: 16px 0 0;
+  padding-left: 18px;
+  list-style: decimal;
+  display: grid;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.setup-list code {
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85em;
+}
+
+.setup-code {
+  margin-top: 16px;
+  padding: 16px;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(7, 11, 20, 0.7);
+  color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  white-space: pre;
+}
+
+@media (min-width: 981px) {
+  .contact-layout {
+    align-items: stretch;
+  }
+
+  .contact-grid-side {
+    grid-auto-rows: 1fr;
+  }
+
+  .contact-grid-side li {
+    display: flex;
+  }
+
+  .contact-grid-side .contact-card {
+    flex: 1;
+  }
+}
+
+@media (max-width: 980px) {
+  .contact-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-grid-side {
+    grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .form-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .form-footer .btn {
+    width: 100%;
+  }
+
+  .admin-shell {
+    padding: 28px 18px 56px;
   }
 }

@@ -1,0 +1,87 @@
+---
+export const prerender = false;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import { site } from '../../data/site';
+
+const configured = Astro.locals.supabaseConfigured;
+
+if (configured && Astro.locals.user) return Astro.redirect('/admin', 302);
+
+const error = Astro.url.searchParams.get('error');
+const next = Astro.url.searchParams.get('next') ?? '/admin';
+
+const errors: Record<string, string> = {
+  missing: 'Enter both your email and password.',
+  invalid: 'That email and password combination did not work.',
+  config: 'Supabase is not configured yet. Add your keys to .env first.',
+};
+---
+
+<BaseLayout title="Admin sign in" noindex chrome={false} bodyClass="admin-body">
+  <main class="login-wrap" id="main">
+    <div class="panel login-card">
+      <div class="login-head">
+        <a class="brand" href="/" aria-label={`${site.name} — back to the site`}>
+          <span class="brand-mark" aria-hidden="true">{site.initials}</span>
+        </a>
+        <h1>Admin sign in</h1>
+        <p>Only the site owner can read the message inbox.</p>
+      </div>
+
+      {
+        error && errors[error] && (
+          <p class="login-alert" role="alert">
+            {errors[error]}
+          </p>
+        )
+      }
+
+      {
+        configured ? (
+          <form class="login-form" method="post" action="/api/auth/signin">
+            <input type="hidden" name="next" value={next} />
+            <div class="field">
+              <label for="email">Email</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autocomplete="username"
+                required
+                autofocus
+              />
+            </div>
+            <div class="field">
+              <label for="password">Password</label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                required
+              />
+            </div>
+            <button class="btn btn-primary" type="submit">
+              <Icon name="lock" />
+              Sign in
+            </button>
+          </form>
+        ) : (
+          <div>
+            <p class="login-alert" role="alert">
+              Supabase keys are missing, so sign-in is disabled.
+            </p>
+            <p class="form-note">
+              Copy <code>.env.example</code> to <code>.env</code>, add your project URL and keys, then
+              restart the dev server.
+            </p>
+          </div>
+        )
+      }
+
+      <p class="login-foot"><a href="/">← Back to the portfolio</a></p>
+    </div>
+  </main>
+</BaseLayout>

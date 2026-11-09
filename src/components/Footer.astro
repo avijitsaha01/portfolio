@@ -1,0 +1,20 @@
+---
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p>&copy; <span id="year">{year}</span> {site.name}. All rights reserved.</p>
+    <p class="footer-note">
+      Built with Astro, Supabase &amp; hand-written CSS.
+      <a class="footer-admin" href="/admin">Admin</a>
+    </p>
+  </div>
+</footer>
+
+<a class="to-top" href="#top" aria-label="Back to top">
+  <Icon name="arrow-up" />
+</a>

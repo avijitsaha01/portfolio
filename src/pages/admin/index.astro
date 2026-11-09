@@ -1,0 +1,208 @@
+---
+export const prerender = false;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import { site } from '../../data/site';
+import { createSupabaseAdmin, createSupabaseServer, type ContactMessage } from '../../lib/supabase';
+
+const configured = Astro.locals.supabaseConfigured;
+const user = Astro.locals.user;
+
+let messages: ContactMessage[] = [];
+let loadError: string | null = null;
+
+if (configured && user) {
+  const client = createSupabaseAdmin() ?? createSupabaseServer(Astro.request, Astro.cookies)?.supabase;
+
+  if (client) {
+    const { data, error } = await client
+      .from('messages')
+      .select('id, name, email, subject, message, is_read, created_at')
+      .order('created_at', { ascending: false })
+      .limit(100);
+
+    if (error) loadError = error.message;
+    else messages = (data ?? []) as ContactMessage[];
+  } else {
+    loadError = 'No Supabase client could be created.';
+  }
+}
+
+const unread = messages.filter((message) => !message.is_read).length;
+
+const formatDate = (value: string) =>
+  new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium', timeStyle: 'short' }).format(
+    new Date(value),
+  );
+
+const actionError = Astro.url.searchParams.get('error');
+---
+
+<BaseLayout title="Message inbox" noindex chrome={false} bodyClass="admin-body">
+  <main class="admin-shell" id="main">
+    <div class="admin-bar">
+      <a class="admin-brand" href="/">
+        <span class="brand-mark" aria-hidden="true">{site.initials}</span>
+        <span>Inbox</span>
+      </a>
+
+      <div class="admin-actions">
+        <a class="btn btn-ghost btn-sm" href="/">
+          <Icon name="arrow-left" />
+          View site
+        </a>
+        <form method="post" action="/api/auth/signout">
+          <button class="btn btn-ghost btn-sm" type="submit">
+            <Icon name="logout" />
+            Sign out
+          </button>
+        </form>
+      </div>
+    </div>
+
+    {
+      !configured && (
+        <section class="panel setup-card">
+          <h2>Connect Supabase</h2>
+          <p>
+            The site runs without a database, but the inbox and contact form need a Supabase project.
+            Three quick steps:
+          </p>
+          <ol class="setup-list">
+            <li>
+              Create a free project at <code>supabase.com/dashboard</code>.
+            </li>
+            <li>
+              Run <code>supabase/schema.sql</code> in the SQL editor to create the
+              <code>messages</code> table and its policies.
+            </li>
+            <li>
+              Copy <code>.env.example</code> to <code>.env</code> and paste your project URL, anon key
+              and service role key. Restart the dev server.
+            </li>
+          </ol>
+          <pre class="setup-code">PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+PUBLIC_SUPABASE_ANON_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=...</pre>
+        </section>
+      )
+    }
+
+    {
+      configured && !user && (
+        <section class="panel setup-card">
+          <h2>Sign in required</h2>
+          <p>
+            <a class="footer-admin" href="/admin/login">
+              Go to the sign-in page
+            </a>{' '}
+            to read the inbox.
+          </p>
+        </section>
+      )
+    }
+
+    {
+      configured && user && (
+        <>
+          <header class="admin-heading">
+            <h1>Message inbox</h1>
+            <p>
+              Signed in as <strong>{user.email}</strong>. Showing the latest {messages.length}
+              {' '}
+              {messages.length === 1 ? 'message' : 'messages'}.
+            </p>
+          </header>
+
+          {actionError && (
+            <p class="login-alert" role="alert">
+              That action did not go through. Please try again.
+            </p>
+          )}
+
+          {loadError && (
+            <p class="login-alert" role="alert">
+              Could not load messages: {loadError}. Check that <code>supabase/schema.sql</code> has
+              been run.
+            </p>
+          )}
+
+          <dl class="admin-stats">
+            <div class="panel admin-stat">
+              <dt>Total</dt>
+              <dd>{messages.length}</dd>
+            </div>
+            <div class="panel admin-stat">
+              <dt>Unread</dt>
+              <dd>{unread}</dd>
+            </div>
+            <div class="panel admin-stat">
+              <dt>Latest</dt>
+              <dd>{messages[0] ? formatDate(messages[0].created_at) : '—'}</dd>
+            </div>
+          </dl>
+
+          {messages.length === 0 ? (
+            <div class="panel empty-state">
+              <Icon name="inbox" />
+              <p>No messages yet. When someone uses the contact form it will land here.</p>
+            </div>
+          ) : (
+            <div class="message-list">
+              {messages.map((message) => (
+                <article class={`panel message${message.is_read ? '' : ' is-unread'}`}>
+                  <div class="message-head">
+                    <div class="message-from">
+                      <span class="message-name">{message.name}</span>
+                      <a class="message-email" href={`mailto:${message.email}`}>
+                        {message.email}
+                      </a>
+                    </div>
+                    <time class="message-date" datetime={message.created_at}>
+                      {formatDate(message.created_at)}
+                    </time>
+                  </div>
+
+                  {message.subject && <p class="message-subject">{message.subject}</p>}
+                  <p class="message-body">{message.message}</p>
+
+                  <div class="message-actions">
+                    <form method="post" action={`/api/messages/${message.id}`}>
+                      <input
+                        type="hidden"
+                        name="action"
+                        value={message.is_read ? 'unread' : 'read'}
+                      />
+                      <button class="icon-btn" type="submit">
+                        <Icon name="check" />
+                        {message.is_read ? 'Mark unread' : 'Mark read'}
+                      </button>
+                    </form>
+
+                    <a class="icon-btn" href={`mailto:${message.email}?subject=Re: ${encodeURIComponent(message.subject ?? 'your message')}`}>
+                      <Icon name="send" />
+                      Reply
+                    </a>
+
+                    <form
+                      method="post"
+                      action={`/api/messages/${message.id}`}
+                      onsubmit="return confirm('Delete this message permanently?')"
+                    >
+                      <input type="hidden" name="action" value="delete" />
+                      <button class="icon-btn danger" type="submit">
+                        <Icon name="trash" />
+                        Delete
+                      </button>
+                    </form>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+        </>
+      )
+    }
+  </main>
+</BaseLayout>

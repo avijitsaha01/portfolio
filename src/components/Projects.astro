@@ -1,0 +1,79 @@
+---
+import { getCollection } from 'astro:content';
+import Icon from './Icon.astro';
+import { sectionCopy } from '../data/site';
+
+const copy = sectionCopy.projects;
+const projects = (await getCollection('projects'))
+  .filter((project) => project.data.featured)
+  .sort((a, b) => a.data.order - b.data.order);
+---
+
+<section class="section" id="projects" aria-labelledby="projects-title">
+  <div class="container">
+    <header class="section-head reveal">
+      <p class="eyebrow"><span>03</span> {copy.eyebrow}</p>
+      <h2 id="projects-title">{copy.title}</h2>
+      <p class="section-sub">{copy.sub}</p>
+    </header>
+
+    <div class="project-grid">
+      {
+        projects.map((project, index) => (
+          <article class="project-card reveal" style={`--d: ${index * 60}ms`}>
+            <a
+              class="project-media"
+              href={project.data.liveUrl}
+              target="_blank"
+              rel="noopener"
+              aria-label={`Open the ${project.data.title} live site`}
+            >
+              <img
+                src={project.data.image}
+                alt={project.data.alt}
+                loading={index < 2 ? 'eager' : 'lazy'}
+                decoding="async"
+              />
+              <span class="project-media-overlay" aria-hidden="true">
+                <Icon name="external" />
+              </span>
+            </a>
+            <div class="project-body">
+              <div class="project-head">
+                <h3>{project.data.title}</h3>
+                <div class="project-links">
+                  {project.data.repoUrl && (
+                    <a
+                      href={project.data.repoUrl}
+                      target="_blank"
+                      rel="noopener"
+                      aria-label={`${project.data.title} source code on GitHub`}
+                    >
+                      <Icon name="github" />
+                    </a>
+                  )}
+                  <a
+                    href={project.data.liveUrl}
+                    target="_blank"
+                    rel="noopener"
+                    aria-label={`${project.data.title} live demo`}
+                  >
+                    <Icon name="external" />
+                  </a>
+                </div>
+              </div>
+              <p class="project-desc">{project.data.description}</p>
+              {project.data.tags.length > 0 && (
+                <ul class="tag-list" aria-label="Technologies used">
+                  {project.data.tags.map((tag) => (
+                    <li>{tag}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

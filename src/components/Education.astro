@@ -1,0 +1,54 @@
+---
+import { getCollection } from 'astro:content';
+import Icon from './Icon.astro';
+import { sectionCopy } from '../data/site';
+
+const copy = sectionCopy.education;
+const schools = (await getCollection('education')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<section class="section" id="education" aria-labelledby="education-title">
+  <div class="container">
+    <header class="section-head reveal">
+      <p class="eyebrow"><span>05</span> {copy.eyebrow}</p>
+      <h2 id="education-title">{copy.title}</h2>
+      <p class="section-sub">{copy.sub}</p>
+    </header>
+
+    <div class="education-grid">
+      {
+        schools.map((school, index) => (
+          <article class="panel edu-card reveal" style={`--d: ${index * 80}ms`}>
+            <div class="edu-top">
+              <span class="edu-icon">
+                <Icon name={school.data.icon} />
+              </span>
+              <span class="badge">{school.data.kind}</span>
+            </div>
+            <h3>
+              <a href={school.data.url} target="_blank" rel="noopener">
+                {school.data.school}
+              </a>
+            </h3>
+            <p class="edu-meta">
+              <Icon name="pin" />
+              {school.data.location}
+            </p>
+            <p class="edu-degree">{school.data.program}</p>
+
+            {school.data.coursework.length > 0 && (
+              <div>
+                <h4>Relevant coursework</h4>
+                <ul class="check-list">
+                  {school.data.coursework.map((course) => (
+                    <li>{course}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

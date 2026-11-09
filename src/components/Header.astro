@@ -1,0 +1,55 @@
+---
+import Icon from './Icon.astro';
+import { nav, site } from '../data/site';
+---
+
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="scroll-progress" aria-hidden="true"></div>
+
+<header class="site-header" id="site-header">
+  <div class="container nav-inner">
+    <a class="brand" href="#top" aria-label={`${site.name} — back to top`}>
+      <span class="brand-mark" aria-hidden="true">{site.initials}</span>
+      <span class="brand-name">{site.firstName}<span>{site.lastName}</span></span>
+    </a>
+
+    <nav class="nav-links" aria-label="Primary">
+      {nav.map((item) => <a href={`#${item.id}`}>{item.label}</a>)}
+    </nav>
+
+    <div class="nav-actions">
+      <a class="btn btn-ghost btn-sm nav-resume" href={site.resumeUrl} target="_blank" rel="noopener">
+        <Icon name="file" />
+        Resume
+      </a>
+      <button
+        class="nav-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+        aria-label="Open navigation menu"
+      >
+        <Icon name="menu" class="icon icon-menu" />
+        <Icon name="close" class="icon icon-close" />
+      </button>
+    </div>
+  </div>
+</header>
+
+<nav class="mobile-nav" id="mobile-nav" aria-label="Mobile" aria-hidden="true">
+  <ul>
+    {
+      nav.map((item, index) => (
+        <li>
+          <a href={`#${item.id}`}>
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            {item.label}
+          </a>
+        </li>
+      ))
+    }
+    <li>
+      <a href={site.resumeUrl} target="_blank" rel="noopener"><span>CV</span>Resume</a>
+    </li>
+  </ul>
+</nav>

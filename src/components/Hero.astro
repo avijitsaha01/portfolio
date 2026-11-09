@@ -1,0 +1,89 @@
+---
+import Icon from './Icon.astro';
+import { hero, site } from '../data/site';
+---
+
+<section class="hero" id="top" aria-labelledby="hero-title">
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <p class="status reveal">
+        <span class="status-dot" aria-hidden="true"></span>
+        {site.availability}
+      </p>
+
+      <h1 class="reveal" id="hero-title">
+        {hero.headline} <span class="grad">{site.firstName}&nbsp;{site.lastName}</span>
+      </h1>
+
+      <p class="hero-role reveal">
+        A <span class="typing" data-strings={JSON.stringify(hero.typedStrings)}>{hero.typedStrings[0]}</span>
+      </p>
+
+      <p class="hero-text reveal">{hero.intro}</p>
+
+      <div class="hero-actions reveal">
+        <a class="btn btn-primary" href="#projects">
+          View my work
+          <Icon name="arrow-down" />
+        </a>
+        <a class="btn btn-ghost" href="#contact">Get in touch</a>
+      </div>
+
+      <ul class="socials reveal" aria-label="Social profiles">
+        <li>
+          <a href={site.github} target="_blank" rel="noopener" aria-label="GitHub profile">
+            <Icon name="github" />
+          </a>
+        </li>
+        <li>
+          <a href={site.linkedin} target="_blank" rel="noopener" aria-label="LinkedIn profile">
+            <Icon name="linkedin" />
+          </a>
+        </li>
+        <li>
+          <a href={`mailto:${site.email}`} aria-label="Send an email">
+            <Icon name="mail" />
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="hero-visual reveal">
+      <div class="avatar-wrap">
+        <img
+          class="avatar"
+          src="/assets/img/2091.jpg"
+          alt={`Portrait of ${site.name}`}
+          width="360"
+          height="360"
+        />
+        {
+          hero.chips.map((chip, index) => (
+            <span class={`floating-chip ${index === 0 ? 'chip-a' : 'chip-b'}`}>
+              <Icon name={chip.icon} />
+              {chip.label}
+            </span>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <dl class="hero-stats reveal">
+      {
+        hero.stats.map((stat) => (
+          <div class="stat">
+            <dt>{stat.label}</dt>
+            <dd class={stat.gradient ? 'grad' : undefined}>{stat.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+
+  <a class="scroll-cue" href="#about" aria-label="Scroll to the About section">
+    <span aria-hidden="true"></span>
+  </a>
+</section>

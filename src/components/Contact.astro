@@ -1,0 +1,63 @@
+---
+import Icon from './Icon.astro';
+import ContactForm from './ContactForm.astro';
+import { sectionCopy, site } from '../data/site';
+
+const copy = sectionCopy.contact;
+
+const cards = [
+  { icon: 'phone', label: 'Phone', value: site.phoneDisplay, href: `tel:${site.phone}` },
+  { icon: 'mail', label: 'Email', value: site.email, href: `mailto:${site.email}` },
+  { icon: 'github', label: 'GitHub', value: 'github.com/avijitsaha01', href: site.github },
+  { icon: 'linkedin', label: 'LinkedIn', value: 'linkedin.com/in/avijit2021', href: site.linkedin },
+] as const;
+---
+
+<section class="section" id="contact" aria-labelledby="contact-title">
+  <div class="container">
+    <header class="section-head reveal">
+      <p class="eyebrow"><span>06</span> {copy.eyebrow}</p>
+      <h2 id="contact-title">{copy.title}</h2>
+      <p class="section-sub">{copy.sub}</p>
+    </header>
+
+    <div class="panel contact-cta reveal">
+      <div>
+        <h3>Have a project or a role in mind?</h3>
+        <p>Tell me what you're building — I'll bring the code.</p>
+      </div>
+      <a class="btn btn-primary" href={`mailto:${site.email}`}>
+        <Icon name="mail" />
+        Say hello
+      </a>
+    </div>
+
+    <div class="contact-layout">
+      <div class="reveal">
+        <ContactForm />
+      </div>
+
+      <ul class="contact-grid contact-grid-side">
+        {
+          cards.map((card, index) => (
+            <li class="reveal" style={`--d: ${index * 60}ms`}>
+              <a
+                class="panel contact-card"
+                href={card.href}
+                {...(card.href.startsWith('http')
+                  ? { target: '_blank', rel: 'noopener' }
+                  : {})}
+              >
+                <span class="contact-icon">
+                  <Icon name={card.icon} />
+                </span>
+                <span class="contact-label">{card.label}</span>
+                <span class="contact-value">{card.value}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>

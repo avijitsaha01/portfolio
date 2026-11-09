@@ -1,0 +1,46 @@
+---
+import { getCollection } from 'astro:content';
+import { sectionCopy } from '../data/site';
+
+const copy = sectionCopy.experience;
+const jobs = (await getCollection('experience')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<section class="section" id="experience" aria-labelledby="experience-title">
+  <div class="container">
+    <header class="section-head reveal">
+      <p class="eyebrow"><span>02</span> {copy.eyebrow}</p>
+      <h2 id="experience-title">{copy.title}</h2>
+      <p class="section-sub">{copy.sub}</p>
+    </header>
+
+    <ol class="timeline">
+      {
+        jobs.map((job) => (
+          <li class="timeline-item reveal">
+            <span class="timeline-dot" aria-hidden="true" />
+            <article class="panel timeline-card">
+              <div class="timeline-top">
+                <div>
+                  <h3>{job.data.role}</h3>
+                  <p class="timeline-org">
+                    {job.data.company} <span aria-hidden="true">·</span> {job.data.location}
+                  </p>
+                </div>
+                <span class="badge">{job.data.period}</span>
+              </div>
+              <p class="timeline-text">{job.body?.trim()}</p>
+              {job.data.tags.length > 0 && (
+                <ul class="tag-list" aria-label="Tools used">
+                  {job.data.tags.map((tag) => (
+                    <li>{tag}</li>
+                  ))}
+                </ul>
+              )}
+            </article>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>

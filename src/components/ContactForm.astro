@@ -1,0 +1,110 @@
+---
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+---
+
+<form
+  class="panel contact-form"
+  id="contact-form"
+  method="post"
+  action="/api/contact"
+  aria-labelledby="contact-form-title"
+>
+  <div class="form-head">
+    <h3 id="contact-form-title">Send me a message</h3>
+    <p>Tell me about the role, project or idea. I usually reply within a day.</p>
+  </div>
+
+  <div class="form-row">
+    <div class="field">
+      <label for="cf-name">Name</label>
+      <input id="cf-name" name="name" type="text" autocomplete="name" required maxlength="120" />
+    </div>
+    <div class="field">
+      <label for="cf-email">Email</label>
+      <input id="cf-email" name="email" type="email" autocomplete="email" required maxlength="160" />
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="cf-subject">Subject <span class="optional">optional</span></label>
+    <input id="cf-subject" name="subject" type="text" maxlength="200" />
+  </div>
+
+  <div class="field">
+    <label for="cf-message">Message</label>
+    <textarea id="cf-message" name="message" rows="6" required minlength="10" maxlength="5000"
+    ></textarea>
+  </div>
+
+  <div class="honey" aria-hidden="true">
+    <label for="cf-website">Leave this field empty</label>
+    <input id="cf-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <div class="form-footer">
+    <button class="btn btn-primary" type="submit">
+      <Icon name="send" />
+      Send message
+    </button>
+    <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+  </div>
+
+  <p class="form-note">
+    Prefer email? <a href={`mailto:${site.email}`}>{site.email}</a>
+  </p>
+</form>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const status = document.getElementById('form-status') as HTMLElement | null;
+
+  if (form && status) {
+    const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+
+    const setStatus = (text: string, state: 'pending' | 'ok' | 'error') => {
+      status.textContent = text;
+      status.dataset.state = state;
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!form.reportValidity()) return;
+
+      const payload = Object.fromEntries(new FormData(form).entries());
+      submit && (submit.disabled = true);
+      setStatus('Sending…', 'pending');
+
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', accept: 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const body = (await response.json().catch(() => ({}))) as { error?: string };
+
+        if (!response.ok) throw new Error(body.error || 'Your message could not be sent.');
+
+        form.reset();
+        setStatus('Thanks — your message is in. I usually reply within a day.', 'ok');
+      } catch (error) {
+        const detail = error instanceof Error ? error.message : 'Your message could not be sent.';
+        setStatus(detail, 'error');
+      } finally {
+        submit && (submit.disabled = false);
+      }
+    });
+
+    // Result of a no-JavaScript submit (the endpoint redirects back here).
+    const params = new URLSearchParams(window.location.search);
+    const sent = params.get('sent');
+    if (sent === 'ok') {
+      setStatus('Thanks — your message is in. I usually reply within a day.', 'ok');
+    } else if (sent === 'error') {
+      setStatus(params.get('reason') || 'Your message could not be sent.', 'error');
+    }
+    if (sent) {
+      window.history.replaceState({}, '', `${window.location.pathname}#contact`);
+    }
+  }
+</script>

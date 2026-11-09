@@ -1,0 +1,27 @@
+{
+  "name": "avijit-portfolio",
+  "type": "module",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Full-stack portfolio for Avijit Saha - Astro + Supabase.",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/netlify": "^8.2.12",
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.119.0",
+    "astro": "^7.4.7"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "typescript": "^6.0.3"
+  }
+}
